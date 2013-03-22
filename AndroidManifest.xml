@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.kotiya.visualthemeselector"
+    coreApp="true"
+    android:sharedUserId="android.uid.system">
+
+    <original-package android:name="me.kotiya.visualthemeselector" />
+        
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppBaseTheme" >
+        <activity
+            android:name="me.kotiya.visualthemeselector.MainActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="me.kotiya.visualthemeselector.VTSettingsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="jcrom" />
+                <data android:host=""/>
+                <data android:pathPrefix="/set_theme"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="me.kotiya.visualthemeselector.ThemeClearActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Holo.Panel" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="jcrom" />
+                <data android:host=""/>
+                <data android:pathPrefix="/clear_theme"/>
+            </intent-filter>
+        </activity>
+        
+    </application>
+
+</manifest>
