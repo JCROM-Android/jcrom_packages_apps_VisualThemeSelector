@@ -9,17 +9,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemProperties;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Point;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -29,7 +25,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
-import android.widget.Toast;
 
 public abstract class VisualThemeAbstractActivity extends Activity
     implements View.OnClickListener, ActionBar.OnNavigationListener{
@@ -43,7 +38,7 @@ public abstract class VisualThemeAbstractActivity extends Activity
 	protected String[] mThemeList;
 	protected String mThemePath;
 	protected ProgressDialog mProgressDialog;
-	protected Activity mActivity = this;
+	private Activity mActivity = this;
 	private SpinnerAdapter mSpinnerAdapter = null;
 	private ActionBar mActionBar = null;
 
@@ -108,6 +103,7 @@ public abstract class VisualThemeAbstractActivity extends Activity
 				// TODO 自動生成されたメソッド・スタブ
 				mCurrentPage = arg0;
 				mActionBar.setSelectedNavigationItem(mCurrentPage);
+
 			}
         	
         });
@@ -129,7 +125,7 @@ public abstract class VisualThemeAbstractActivity extends Activity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_main, menu);
+		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
@@ -147,6 +143,16 @@ public abstract class VisualThemeAbstractActivity extends Activity
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
     }
+
+    protected final Runnable closeProgress = new Runnable() {
+        @Override
+        public void run() {
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+        }
+    };
     
     protected String removeFileExtension(String filename) {
         int lastDotPos = filename.lastIndexOf('.');
@@ -163,6 +169,7 @@ public abstract class VisualThemeAbstractActivity extends Activity
     abstract public void selectOnClick(View v);
     
     public void descriptionOnClick(View v){
+
 		StringBuilder builder = new StringBuilder();
 		builder.append("/data/data/");
 		builder.append(this.getPackageName());
@@ -175,7 +182,7 @@ public abstract class VisualThemeAbstractActivity extends Activity
 		String intotext;
 		
 		if(themeZipExt.isDirectory()){
-			// Directoryが存在する＝Zipテーマなのでここから読む
+			// Directoryが存在する＝Zipテーマなので該当directoryからinfo.txt読む
 			String themeZipInfoStr = themeZipDir.concat("/info.txt");
 			File themeZipInfo = new File(themeZipInfoStr);
 			intotext = infoReader(themeZipInfo);
