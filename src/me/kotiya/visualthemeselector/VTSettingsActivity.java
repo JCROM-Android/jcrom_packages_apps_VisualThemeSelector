@@ -1,53 +1,50 @@
 package me.kotiya.visualthemeselector;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
-import android.os.SystemProperties;
+import android.widget.Toast;
 
 public class VTSettingsActivity extends VisualThemeAbstractActivity {
+
+	static private final int INTENT_SET_THEME = 1;
     
-    private final Runnable closeProgress = new Runnable() {
-        @Override
-        public void run() {
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-
-	        Intent intent = new Intent();
-	        intent.putExtra("jcrom.new.theme", removeFileExtension(mThemeList[mCurrentPage]));
-		setResult(RESULT_OK, intent);
-		finish();
-            }
-        }
-    };
-
+	@Override
 	public void selectOnClick(View v) {
 		// TODO 自動生成されたメソッド・スタブ
+		
+    	StringBuilder builder = new StringBuilder();
+		builder.append(mThemeList[mCurrentPage]);
+		String theme = builder.toString();
     	
-    	DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO 自動生成されたメソッド・スタブ
-
-				boolean performReset = false;
-				if(which == DialogInterface.BUTTON_POSITIVE){
-					performReset = true;
-				}
-				
-				showProgress(R.string.progress_set_theme);
-
-				SystemProperties.set(MY_THEME_PROPERTY, removeFileExtension(mThemeList[mCurrentPage]));
-				new ThemeManager(mActivity).setTheme(removeFileExtension(mThemeList[mCurrentPage]), closeProgress, performReset);
-			}
-		};
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.set_theme_confirm_reboot);
-		builder.setPositiveButton(R.string.set_theme_confirm_yes, listener);
-		builder.setNegativeButton(R.string.set_theme_confirm_no, listener);
-		builder.show();
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("jcrom:///set_theme"));
+		intent.putExtra("jcrom.new.theme", removeFileExtension(theme));
+		startActivityForResult(intent, INTENT_SET_THEME);
+    	
+	}
+	
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
         
+        if(requestCode == INTENT_SET_THEME){
+        	switch(resultCode){
+        	case RESULT_OK:
+        		setResult(RESULT_OK);
+        		finish();
+        		break;
+        		
+        	case RESULT_CANCELED:
+        		setResult(RESULT_CANCELED);
+        		break;
+        	}
+        }
+    }
+
+	@Override
+	public void exitVTS() {
+		// TODO 自動生成されたメソッド・スタブ
+		Toast.makeText(this, R.string.mytheme_not_found_message, Toast.LENGTH_LONG).show();
+		setResult(RESULT_CANCELED);
+		finish();
 	}
 }

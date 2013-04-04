@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string name="app_name">VisualThemeSelector</string>
-    <string name="menu_settings">設定</string>
+    <string name="app_name">VisualThemeSelector type2</string>
+    <string name="action_settings">設定</string>
     <string name="select_theme">テーマ適用</string>
     <string name="description_theme">テーマ情報</string>
     <string name="progress_set_theme">テーマ適用中…</string>
@@ -12,5 +12,6 @@
     <string name="set_theme_confirm_no">いいえ</string>
     <string name="description_dialog_title">テーマ情報</string>
     <string name="info_txt_not_found">info.txtが見つかりません。</string>
+    <string name="mytheme_not_found_message">テーマフォルダが見つかりません。\nテーマセレクタを終了します...</string>
 
 </resources>

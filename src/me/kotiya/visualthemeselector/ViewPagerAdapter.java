@@ -6,9 +6,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -16,7 +13,6 @@ import java.util.zip.ZipFile;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +66,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		options.inPreferredConfig = Bitmap.Config.RGB_565;
-		
+
 		int scale;
 
 		// mThemeList[position]のテーマからサムネイルを取り出して表示する。
@@ -96,12 +92,13 @@ public class ViewPagerAdapter extends PagerAdapter {
 					builder.append(thumbList[i]);
 					String thumbnail = builder.toString();
 					BitmapFactory.decodeFile(thumbnail, options);
-					
+
 					scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 					options.inSampleSize = scale;
 					options.inJustDecodeBounds = false;
-					
+
 					tb = BitmapFactory.decodeFile(thumbnail, options);
+
 					break;
 				}
 			}
@@ -113,12 +110,12 @@ public class ViewPagerAdapter extends PagerAdapter {
 			builder.append(mThemeList[position]);
 			builder.append("/thumbnail/thumbnail.png");
 			String tbf = builder.toString();
-			
+
 			BitmapFactory.decodeFile(tbf, options);
-			scale = Math.max(options.outWidth / mPagerWidth,options.outHeight / mPagerHeight);
+			scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 			options.inSampleSize = scale;
 			options.inJustDecodeBounds = false;
-			
+
 			tb = BitmapFactory.decodeFile(tbf, options);
 
 			if(null == tb){
@@ -127,10 +124,10 @@ public class ViewPagerAdapter extends PagerAdapter {
 				builder2.append(mThemeList[position]);
 				builder2.append("/wallpaper/home_wallpaper.png");
 				String tbw = builder2.toString();
-				
+
 				options.inJustDecodeBounds = true;
 				BitmapFactory.decodeFile(tbw, options);
-				scale = Math.max(options.outWidth / mPagerWidth,options.outHeight / mPagerHeight);
+				scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 				options.inSampleSize = scale;
 				options.inJustDecodeBounds = false;
 				tb = BitmapFactory.decodeFile(tbw, options);
@@ -172,7 +169,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 		oFbuilder.append(Long.toString(lMtime));
 		oFbuilder.append(".png");
 		String thumbName = oFbuilder.toString();
-		
+
 		// outputするフォルダがない場合はフォルダを作成する
 		// フォルダが存在する場合は中身のファイル名を確認して一致する場合はファイルを抽出処理しない
 		if(!outDir.exists()){
@@ -195,17 +192,17 @@ public class ViewPagerAdapter extends PagerAdapter {
 			}
 
 		}
-		
+
 		// ファイルを抽出する
 		for(int i = 0; i < 3; i++){
-			
+
 			boolean thumbstat = checkFile(outDir, thumbName);
 			if(thumbstat) continue;
-			
+
 			decodeZip(zipfile, outDir, i);
 		}
 	}
-	
+
 	/**
 	 * 要求されたファイルをZipfileから抽出する
 	 * @param zipfile
@@ -213,7 +210,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 	 * @param position
 	 */
 	private void decodeZip(File zipfile, File outputDir, int position){
-		
+
 		File outFile = new File(outputDir, extractedFiles[position]);
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
@@ -245,7 +242,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 			// TODO 自動生成された catch ブロック
 		}
 	}
-	
+
 	/**
 	 * 画像ファイルが抽出済かチェックして存在したらrenameする。
 	 * @param outDir
@@ -253,33 +250,33 @@ public class ViewPagerAdapter extends PagerAdapter {
 	 * @return
 	 */
 	private boolean checkFile(File outDir, String thumbName){
-		
+
 		File thumbnail = new File(outDir.getPath().concat("/").concat(thumbName));
 		File tn = new File(outDir.getPath().concat("/").concat(extractedFiles[0]));
 		if(tn.exists()){
 			tn.renameTo(thumbnail);
 			return true;
 		}
-		
+
 		File wp = new File(outDir.getPath().concat("/").concat(extractedFiles[1]));
 		if(wp.exists()){
 			wp.renameTo(thumbnail);
 			return false;
 		}
-		
+
 		return false;
-		
+
 	}
-	
+
 	public void setList(String[] themeList){
 		mThemeList = themeList;
 		THEME_NUMS = mThemeList.length;
 	}
-	
+
 	public void setPath(String themePath){
 		mThemePath = themePath;
 	}
-	
+
 	public void setSizeofView(int width, int height){
 		mPagerWidth = width;
 		mPagerHeight = height;		
