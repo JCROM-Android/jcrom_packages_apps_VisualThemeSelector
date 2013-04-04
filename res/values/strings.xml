@@ -13,5 +13,6 @@
     <string name="description_dialog_title">Theme Information</string>
     <string name="description_dialog_ok">OK</string>
     <string name="info_txt_not_found">info.txt not found.</string>
+    <string name="mytheme_not_found_message">Theme folder not found.\nExiting VisualThemeSelector...</string>
 
 </resources>

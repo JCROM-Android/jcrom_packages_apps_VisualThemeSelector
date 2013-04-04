@@ -59,6 +59,12 @@ public abstract class VisualThemeAbstractActivity extends Activity
 		mThemePath = builder.toString();
 
 		File td = new File(mThemePath);
+		
+		if(!td.exists()){
+			exitVTS();
+			return;
+		}
+		
 		String[] mThemeListTmp = td.list();
 		
 		List<String> tmpList = new ArrayList<String>(Arrays.asList(mThemeListTmp));
@@ -182,7 +188,7 @@ public abstract class VisualThemeAbstractActivity extends Activity
 		String intotext;
 		
 		if(themeZipExt.isDirectory()){
-			// Directoryが存在する＝Zipテーマなので該当directoryからinfo.txt読む
+			// Directoryが存在する＝Zipテーマなので該当directoryからinfo.txtを読む
 			String themeZipInfoStr = themeZipDir.concat("/info.txt");
 			File themeZipInfo = new File(themeZipInfoStr);
 			intotext = infoReader(themeZipInfo);
@@ -263,4 +269,6 @@ public abstract class VisualThemeAbstractActivity extends Activity
 		
 		mPagerAdapter.setSizeofView(dispSize.x, dispSize.y);
 	}
+
+	abstract public void exitVTS();
 }

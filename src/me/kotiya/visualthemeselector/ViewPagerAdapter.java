@@ -112,7 +112,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 			String tbf = builder.toString();
 
 			BitmapFactory.decodeFile(tbf, options);
-			scale = Math.max(options.outWidth / mPagerWidth,options.outHeight / mPagerHeight);
+			scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 			options.inSampleSize = scale;
 			options.inJustDecodeBounds = false;
 
@@ -127,7 +127,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
 				options.inJustDecodeBounds = true;
 				BitmapFactory.decodeFile(tbw, options);
-				scale = Math.max(options.outWidth / mPagerWidth,options.outHeight / mPagerHeight);
+				scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 				options.inSampleSize = scale;
 				options.inJustDecodeBounds = false;
 				tb = BitmapFactory.decodeFile(tbw, options);

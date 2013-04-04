@@ -12,5 +12,6 @@
     <string name="set_theme_confirm_no">いいえ</string>
     <string name="description_dialog_title">テーマ情報</string>
     <string name="info_txt_not_found">info.txtが見つかりません。</string>
+    <string name="mytheme_not_found_message">テーマフォルダが見つかりません。\nテーマセレクタを終了します...</string>
 
 </resources>

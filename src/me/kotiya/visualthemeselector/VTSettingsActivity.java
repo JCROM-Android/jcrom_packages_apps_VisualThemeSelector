@@ -3,6 +3,7 @@ package me.kotiya.visualthemeselector;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.widget.Toast;
 
 public class VTSettingsActivity extends VisualThemeAbstractActivity {
 
@@ -38,4 +39,12 @@ public class VTSettingsActivity extends VisualThemeAbstractActivity {
         	}
         }
     }
+
+	@Override
+	public void exitVTS() {
+		// TODO 自動生成されたメソッド・スタブ
+		Toast.makeText(this, R.string.mytheme_not_found_message, Toast.LENGTH_LONG).show();
+		setResult(RESULT_CANCELED);
+		finish();
+	}
 }
