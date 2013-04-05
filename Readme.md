@@ -1,1 +1,1 @@
-VisualThemeSelector SystemApp
+VisualThemeSelector
