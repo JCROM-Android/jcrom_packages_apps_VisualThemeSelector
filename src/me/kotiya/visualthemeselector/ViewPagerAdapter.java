@@ -13,6 +13,7 @@ import java.util.zip.ZipFile;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,85 +62,108 @@ public class ViewPagerAdapter extends PagerAdapter {
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
 		// TODO 自動生成されたメソッド・スタブ
+		AsyncImageView iv = new AsyncImageView(mContext, container);
+		iv.setImageFromFile(mThemeList[position]);
+		return iv;
+	}
+	
+	class AsyncImageView extends ImageView{
+		ViewGroup mContainer;
+		
+		public AsyncImageView(Context context, ViewGroup container){
+			super(context);	
+			mContainer = container;
+		}
+		public void setImageFromFile(String filename){
+			new DecodeTask().execute(filename);
+		}
 
-		Bitmap tb = null;
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		options.inPreferredConfig = Bitmap.Config.RGB_565;
+		class DecodeTask extends AsyncTask<String, Void, Bitmap> {
+			@Override
+			protected Bitmap doInBackground(String... params) {
+				Bitmap tb = null;
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = true;
+				options.inPreferredConfig = Bitmap.Config.RGB_565;
 
-		int scale;
+				int scale;
+				// mThemeList[position]のテーマからサムネイルを取り出して表示する。
+				if(params[0].endsWith(".zip")){
+					// zipテーマの場合
+					extractFiles(params[0]);
 
-		// mThemeList[position]のテーマからサムネイルを取り出して表示する。
-		if(mThemeList[position].endsWith(".zip")){
-			// zipテーマの場合
-			extractFiles(mThemeList[position]);
+					StringBuilder builder = new StringBuilder();
+					builder.append("/data/data/");
+					builder.append(mContext.getPackageName());
+					builder.append("/themethumbs/");
+					builder.append(params[0]);
+					int delPos = builder.indexOf(".zip");
+					builder.delete(delPos, delPos+4);
+					builder.append("/");
+					String thumbnailStr = builder.toString();
 
-			StringBuilder builder = new StringBuilder();
-			builder.append("/data/data/");
-			builder.append(mContext.getPackageName());
-			builder.append("/themethumbs/");
-			builder.append(mThemeList[position]);
-			int delPos = builder.indexOf(".zip");
-			builder.delete(delPos, delPos+4);
-			builder.append("/");
-			String thumbnailStr = builder.toString();
+					File thumbDirectory = new File(thumbnailStr);
+					String[] thumbList = thumbDirectory.list();
 
-			File thumbDirectory = new File(thumbnailStr);
-			String[] thumbList = thumbDirectory.list();
+					for(int i = 0; i < thumbList.length; i++){
+						if(thumbList[i].endsWith(".png")){
+							builder.append(thumbList[i]);
+							String thumbnail = builder.toString();
+							BitmapFactory.decodeFile(thumbnail, options);
 
-			for(int i = 0; i < thumbList.length; i++){
-				if(thumbList[i].endsWith(".png")){
-					builder.append(thumbList[i]);
-					String thumbnail = builder.toString();
-					BitmapFactory.decodeFile(thumbnail, options);
+							scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
+							options.inSampleSize = scale;
+							options.inJustDecodeBounds = false;
 
+							tb = BitmapFactory.decodeFile(thumbnail, options);
+
+							break;
+						}
+					}
+
+				}else{
+					// テーマフォルダの場合
+					StringBuilder builder = new StringBuilder();
+					builder.append(mThemePath);
+					builder.append(params[0]);
+					builder.append("/thumbnail/thumbnail.png");
+					String tbf = builder.toString();
+
+					BitmapFactory.decodeFile(tbf, options);
 					scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 					options.inSampleSize = scale;
 					options.inJustDecodeBounds = false;
 
-					tb = BitmapFactory.decodeFile(thumbnail, options);
+					tb = BitmapFactory.decodeFile(tbf, options);
 
-					break;
+					if(null == tb){
+						StringBuilder builder2 = new StringBuilder();
+						builder2.append(mThemePath);
+						builder2.append(params[0]);
+						builder2.append("/wallpaper/home_wallpaper.png");
+						String tbw = builder2.toString();
+
+						options.inJustDecodeBounds = true;
+						BitmapFactory.decodeFile(tbw, options);
+						scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
+						options.inSampleSize = scale;
+						options.inJustDecodeBounds = false;
+						tb = BitmapFactory.decodeFile(tbw, options);
+					}
 				}
+				return tb;
 			}
-
-		}else{
-			// テーマフォルダの場合
-			StringBuilder builder = new StringBuilder();
-			builder.append(mThemePath);
-			builder.append(mThemeList[position]);
-			builder.append("/thumbnail/thumbnail.png");
-			String tbf = builder.toString();
-
-			BitmapFactory.decodeFile(tbf, options);
-			scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
-			options.inSampleSize = scale;
-			options.inJustDecodeBounds = false;
-
-			tb = BitmapFactory.decodeFile(tbf, options);
-
-			if(null == tb){
-				StringBuilder builder2 = new StringBuilder();
-				builder2.append(mThemePath);
-				builder2.append(mThemeList[position]);
-				builder2.append("/wallpaper/home_wallpaper.png");
-				String tbw = builder2.toString();
-
-				options.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(tbw, options);
-				scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
-				options.inSampleSize = scale;
-				options.inJustDecodeBounds = false;
-				tb = BitmapFactory.decodeFile(tbw, options);
+		 
+			@Override
+			protected void onPostExecute(Bitmap result) {
+				setImageBitmap(result);
+				mContainer.addView(AsyncImageView.this);
 			}
 		}
-
-		ImageView iv = new ImageView(mContext);
-		iv.setImageBitmap(tb);
-		container.addView(iv);
-		return iv;
+		
 	}
-
+	
+	
 	/**
 	 * zipファイルからthumbnail.png, home_wallpaper.png, info.txtを抽出する
 	 * @param String zipFileName
@@ -281,5 +305,17 @@ public class ViewPagerAdapter extends PagerAdapter {
 		mPagerWidth = width;
 		mPagerHeight = height;		
 	}
+	
+    protected String removeFileExtension(String filename) {
+        int lastDotPos = filename.lastIndexOf('.');
+
+        if (lastDotPos == -1) {
+            return filename;
+        } else if (lastDotPos == 0) {
+            return filename;
+        } else {
+            return filename.substring(0, lastDotPos);
+        }
+    }
 	
 }
