@@ -14,6 +14,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +89,19 @@ public class ViewPagerAdapter extends PagerAdapter {
 
 				int scale;
 				// mThemeList[position]のテーマからサムネイルを取り出して表示する。
-				if(params[0].endsWith(".zip")){
+				if(params[0].endsWith(".jc")) {
+					int index = params[0].indexOf(".jc");
+					String themeName = params[0].substring(0,index);
+					String filePath = Environment.getExternalStorageDirectory().toString() + "/.mytheme/" + themeName + "/thumbnail.png";
+
+					BitmapFactory.decodeFile(filePath, options);
+					scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
+					options.inSampleSize = scale;
+					options.inJustDecodeBounds = false;
+
+					tb = BitmapFactory.decodeFile(filePath, options);
+
+				}else if(params[0].endsWith(".zip")){
 					// zipテーマの場合
 					extractFiles(params[0]);
 

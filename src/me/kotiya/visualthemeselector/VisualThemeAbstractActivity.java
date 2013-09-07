@@ -179,7 +179,13 @@ public abstract class VisualThemeAbstractActivity extends Activity
 		
 		String intotext;
 		
-		if(themeZipExt.isDirectory()){
+		String themeName = removeFileExtension(mThemeList[mCurrentPage]);
+		String filePath = Environment.getExternalStorageDirectory().toString() + "/.mytheme/" + themeName + "/info.txt";
+		File infoFile = new File(filePath);
+
+		if(infoFile.exists()) {
+			intotext = infoReader(infoFile);
+		}else if(themeZipExt.isDirectory()){
 			// Directoryが存在する＝Zipテーマなので該当directoryからinfo.txtを読む
 			String themeZipInfoStr = themeZipDir.concat("/info.txt");
 			File themeZipInfo = new File(themeZipInfoStr);
