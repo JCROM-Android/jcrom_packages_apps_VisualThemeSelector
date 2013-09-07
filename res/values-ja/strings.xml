@@ -3,6 +3,7 @@
     
     <string name="app_name">VisualThemeSelector</string>
     <string name="action_settings">設定</string>
+    <string name="menu_clear_theme">テーマ解除</string>
     <string name="select_theme">テーマ適用</string>
     <string name="description_theme">テーマ情報</string>
     <string name="progress_set_theme">テーマ適用中…</string>

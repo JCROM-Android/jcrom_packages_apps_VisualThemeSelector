@@ -3,15 +3,18 @@ package me.kotiya.visualthemeselector;
 import android.net.Uri;
 import android.content.Intent;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
+import android.util.Log;
 
 public class MainActivity extends VisualThemeAbstractActivity {
 	
 	static private final int INTENT_SET_THEME = 1;
+	private static final String TAG = "VisualThemeSelector";
     
 	@Override
 	public void selectOnClick(View v) {
-		// TODO 自動生成されたメソッド・スタブ
 		
     	StringBuilder builder = new StringBuilder();
 		builder.append(mThemeList[mCurrentPage]);
@@ -38,9 +41,26 @@ public class MainActivity extends VisualThemeAbstractActivity {
 
 	@Override
 	public void exitVTS() {
-		// TODO 自動生成されたメソッド・スタブ
 		Toast.makeText(this, R.string.mytheme_not_found_message, Toast.LENGTH_LONG).show();
 		setResult(RESULT_CANCELED);
 		finish();
+	}
+
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    		case R.id.menu_clear_theme:
+    			sendClearTheme();
+    			break;
+    		default:
+    			break;
+    	}
+        return true;
+    }
+
+	private void sendClearTheme() {
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("jcrom:///clear_theme"));
+		intent.putExtra("manual_reset", "true");
+		startActivity(intent);
 	}
 }

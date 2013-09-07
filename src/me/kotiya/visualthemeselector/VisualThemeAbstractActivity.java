@@ -94,19 +94,14 @@ public abstract class VisualThemeAbstractActivity extends Activity
 
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
-				// TODO 自動生成されたメソッド・スタブ
-				
 			}
 
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				// TODO 自動生成されたメソッド・スタブ
-				
 			}
 
 			@Override
 			public void onPageSelected(int arg0) {
-				// TODO 自動生成されたメソッド・スタブ
 				mCurrentPage = arg0;
 				mActionBar.setSelectedNavigationItem(mCurrentPage);
 
@@ -118,7 +113,6 @@ public abstract class VisualThemeAbstractActivity extends Activity
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-		// TODO 自動生成されたメソッド・スタブ
 		super.onWindowFocusChanged(hasFocus);
 		
 		int pagerWidth = findViewById(R.id.themepager).getWidth();
@@ -130,14 +124,12 @@ public abstract class VisualThemeAbstractActivity extends Activity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
 	@Override
 	public void onClick(View v) {
-		// TODO 自動生成されたメソッド・スタブ
 	}
 	
     protected void showProgress(int resid) {
@@ -214,8 +206,6 @@ public abstract class VisualThemeAbstractActivity extends Activity
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO 自動生成されたメソッド・スタブ
-				// することは特にない
 			}
 		});
 		alertDialog.show();
@@ -223,7 +213,6 @@ public abstract class VisualThemeAbstractActivity extends Activity
 
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		// TODO 自動生成されたメソッド・スタブ
 		mViewPager.setCurrentItem(itemPosition, true);
 		return true;
 	}
@@ -250,10 +239,8 @@ public abstract class VisualThemeAbstractActivity extends Activity
 			oString = new String(oBuilder);
 			
 		} catch (FileNotFoundException e) {
-			// TODO 自動生成された catch ブロック
 			oString = getString(R.string.info_txt_not_found);
 		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
 			oString = getString(R.string.info_txt_not_found);
 		}
 		
