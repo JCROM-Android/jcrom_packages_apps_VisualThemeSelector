@@ -26,8 +26,8 @@ public class ViewPagerAdapter extends PagerAdapter {
 	private String mThemePath;
 	private int THEME_NUMS;
 	private String[] mThemeList;
-	private String[] decodeEntry = {"thumbnail/thumbnail.png", "wallpaper/home_wallpaper.png", "info.txt"};			// 抽出対象ZipEntry定義
-	private String[] extractedFiles = {"thumbnail.png", "home_wallpaper.png", "info.txt"};								// 抽出後のファイル名称定義
+	private String[] decodeEntry = {"thumbnail/thumbnail.png", "thumbnail/thumbnail.jpg", "wallpaper/home_wallpaper.png", "wallpaper/home_wallpaper.jpg", "info.txt"};			// 抽出対象ZipEntry定義
+	private String[] extractedFiles = {"thumbnail.png", "thumbnail.jpg", "home_wallpaper.png", "home_wallpaper.jpg", "info.txt"};								// 抽出後のファイル名称定義
 	private int mPagerWidth;
 	private int mPagerHeight;
 
@@ -92,14 +92,14 @@ public class ViewPagerAdapter extends PagerAdapter {
 				if(params[0].endsWith(".jc")) {
 					int index = params[0].indexOf(".jc");
 					String themeName = params[0].substring(0,index);
-					String filePath = Environment.getExternalStorageDirectory().toString() + "/.mytheme/" + themeName + "/thumbnail.png";
-
-					BitmapFactory.decodeFile(filePath, options);
+					String filePath = Environment.getExternalStorageDirectory().toString() + "/.mytheme/" + themeName + "/thumbnail";
+					String extension = checkThemeFile(filePath);
+					BitmapFactory.decodeFile(filePath + extension, options);
 					scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 					options.inSampleSize = scale;
 					options.inJustDecodeBounds = false;
 
-					tb = BitmapFactory.decodeFile(filePath, options);
+					tb = BitmapFactory.decodeFile(filePath + extension, options);
 
 				}else if(params[0].endsWith(".zip")){
 					// zipテーマの場合
@@ -131,6 +131,18 @@ public class ViewPagerAdapter extends PagerAdapter {
 							tb = BitmapFactory.decodeFile(thumbnail, options);
 
 							break;
+						}else if(thumbList[i].endsWith(".jpg")){
+							builder.append(thumbList[i]);
+							String thumbnail = builder.toString();
+							BitmapFactory.decodeFile(thumbnail, options);
+
+							scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
+							options.inSampleSize = scale;
+							options.inJustDecodeBounds = false;
+
+							tb = BitmapFactory.decodeFile(thumbnail, options);
+
+							break;
 						}
 					}
 
@@ -139,29 +151,31 @@ public class ViewPagerAdapter extends PagerAdapter {
 					StringBuilder builder = new StringBuilder();
 					builder.append(mThemePath);
 					builder.append(params[0]);
-					builder.append("/thumbnail/thumbnail.png");
+					builder.append("/thumbnail/thumbnail");
 					String tbf = builder.toString();
+					String extension = checkThemeFile(tbf);
 
-					BitmapFactory.decodeFile(tbf, options);
+					BitmapFactory.decodeFile(tbf + extension, options);
 					scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 					options.inSampleSize = scale;
 					options.inJustDecodeBounds = false;
 
-					tb = BitmapFactory.decodeFile(tbf, options);
+					tb = BitmapFactory.decodeFile(tbf + extension, options);
 
 					if(null == tb){
 						StringBuilder builder2 = new StringBuilder();
 						builder2.append(mThemePath);
 						builder2.append(params[0]);
-						builder2.append("/wallpaper/home_wallpaper.png");
+						builder2.append("/wallpaper/home_wallpaper");
 						String tbw = builder2.toString();
+						extension = checkThemeFile(tbf);
 
 						options.inJustDecodeBounds = true;
-						BitmapFactory.decodeFile(tbw, options);
+						BitmapFactory.decodeFile(tbw + extension, options);
 						scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
 						options.inSampleSize = scale;
 						options.inJustDecodeBounds = false;
-						tb = BitmapFactory.decodeFile(tbw, options);
+						tb = BitmapFactory.decodeFile(tbw + extension, options);
 					}
 				}
 				return tb;
@@ -176,6 +190,22 @@ public class ViewPagerAdapter extends PagerAdapter {
 		
 	}
 	
+    private String checkThemeFile(String filename) {
+        String extension = ".png";
+        File file = null;
+
+        file = new File(filename + ".png");
+        if(file.exists()) {
+            extension = ".png";
+        }else {
+            file = new File(filename + ".jpg");
+            if(file.exists()) {
+                extension = ".jpg";
+            }
+        }
+
+        return extension;
+    }
 	
 	/**
 	 * zipファイルからthumbnail.png, home_wallpaper.png, info.txtを抽出する
@@ -204,7 +234,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 		long lMtime = zipfile.lastModified();
 		StringBuilder oFbuilder = new StringBuilder();
 		oFbuilder.append(Long.toString(lMtime));
-		oFbuilder.append(".png");
+		//oFbuilder.append(".png");
 		String thumbName = oFbuilder.toString();
 
 		// outputするフォルダがない場合はフォルダを作成する
@@ -217,7 +247,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 			// フォルダのファイル一覧を取得して比較する
 			String[] children = outDir.list();
 			for(int i = 0; i < children.length; i++){
-				if(children[i].equals(thumbName)){
+				if(children[i].equals(thumbName + ".png") || children[i].equals(thumbName + ".jpg")){
 					// 一致するものが存在する場合は更新不要なので終了する
 					return;
 				}
@@ -231,7 +261,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 		}
 
 		// ファイルを抽出する
-		for(int i = 0; i < 3; i++){
+		for(int i = 0; i < 5; i++){
 
 			boolean thumbstat = checkFile(outDir, thumbName);
 			if(thumbstat) continue;
