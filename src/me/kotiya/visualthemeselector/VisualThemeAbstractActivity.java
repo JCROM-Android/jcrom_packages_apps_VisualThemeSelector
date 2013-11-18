@@ -11,6 +11,7 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemProperties;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,6 +31,7 @@ public abstract class VisualThemeAbstractActivity extends Activity
     implements View.OnClickListener, ActionBar.OnNavigationListener{
 		
     protected static final String MY_THEME_PROPERTY = "persist.sys.theme";
+    private static final String THEME_LOCK = "persist.sys.theme.lock";
     
 	protected int mCurrentPage = 0;		// ViewPagerのデフォルト位置
 	private int mCachePageNum = 3;		// ViewPagerでキャッシュに持つページ数
@@ -145,6 +147,7 @@ public abstract class VisualThemeAbstractActivity extends Activity
     protected final Runnable closeProgress = new Runnable() {
         @Override
         public void run() {
+            SystemProperties.set(THEME_LOCK, "false");
             if (mProgressDialog != null) {
                 mProgressDialog.dismiss();
                 mProgressDialog = null;
