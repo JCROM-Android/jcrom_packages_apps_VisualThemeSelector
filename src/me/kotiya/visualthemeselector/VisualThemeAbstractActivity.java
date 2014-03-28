@@ -63,8 +63,10 @@ public abstract class VisualThemeAbstractActivity extends Activity
 		File td = new File(mThemePath);
 		
 		if(!td.exists()){
-			exitVTS();
-			return;
+			if(!td.mkdir()){
+				exitVTS();
+				return;
+			}
 		}
 		
 		String[] mThemeListTmp = td.list();
