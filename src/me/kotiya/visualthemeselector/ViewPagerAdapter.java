@@ -20,8 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import android.util.Log;
+
 public class ViewPagerAdapter extends PagerAdapter {
 
+	private static final String TAG = "ViewPagerAdapter";
 	private Context mContext;
 	private String mThemePath;
 	private int THEME_NUMS;
@@ -168,7 +171,22 @@ public class ViewPagerAdapter extends PagerAdapter {
 						builder2.append(params[0]);
 						builder2.append("/wallpaper/home_wallpaper");
 						String tbw = builder2.toString();
-						extension = checkThemeFile(tbf);
+						extension = ".png";
+
+						options.inJustDecodeBounds = true;
+						BitmapFactory.decodeFile(tbw + extension, options);
+						scale = Math.max(options.outWidth / mPagerWidth, options.outHeight / mPagerHeight);
+						options.inSampleSize = scale;
+						options.inJustDecodeBounds = false;
+						tb = BitmapFactory.decodeFile(tbw + extension, options);
+					}
+					if(null == tb){
+						StringBuilder builder2 = new StringBuilder();
+						builder2.append(mThemePath);
+						builder2.append(params[0]);
+						builder2.append("/wallpaper/home_wallpaper");
+						String tbw = builder2.toString();
+						extension = ".jpg";
 
 						options.inJustDecodeBounds = true;
 						BitmapFactory.decodeFile(tbw + extension, options);
